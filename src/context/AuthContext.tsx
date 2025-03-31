@@ -4,7 +4,7 @@ import React, { createContext, useState, useContext, useEffect, ReactNode } from
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
-  user: any;
+  user: any | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
@@ -19,73 +19,71 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<any | null>(null);
 
   useEffect(() => {
-    // Check if user is logged in
-    const checkAuthStatus = async () => {
-      const token = localStorage.getItem('token');
-      
-      if (token) {
-        // For simplicity, we're just checking if the token exists
-        // In a real application, you would validate the token with your backend
-        setIsAuthenticated(true);
-        
-        // Mock user data
-        setUser({
-          id: localStorage.getItem('userId') || '1',
-          name: 'Demo User',
-          email: 'demo@example.com',
-          role: 'admin',
-        });
-      }
-      
-      setIsLoading(false);
-    };
+    // Check if the user is logged in (e.g., by verifying a token in localStorage)
+    const token = localStorage.getItem('token');
     
-    checkAuthStatus();
+    if (token) {
+      // In a real application, you would verify the token with your backend
+      setIsAuthenticated(true);
+      // You would also fetch user data here
+      setUser({ id: '123', name: 'Demo User' });
+    }
+    
+    setIsLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
-    // For demonstration purposes, we'll just set a dummy token
-    // In a real application, you would make an API call to your backend
-    setIsLoading(true);
+    // In a real application, you would send a request to your backend to authenticate
+    // and receive a token
     
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // If credentials are valid (in a real app, this would be verified by the backend)
-    localStorage.setItem('token', 'demo-token');
-    localStorage.setItem('userId', '1');
-    
-    setIsAuthenticated(true);
-    setUser({
-      id: '1',
-      name: 'Demo User',
-      email,
-      role: 'admin',
+    // This is just a mock implementation
+    return new Promise<void>((resolve, reject) => {
+      // Mock login logic
+      if (email === 'admin@example.com' && password === 'password') {
+        const mockToken = 'mock-auth-token';
+        localStorage.setItem('token', mockToken);
+        localStorage.setItem('userId', '123');
+        
+        setIsAuthenticated(true);
+        setUser({ id: '123', name: 'Demo User' });
+        resolve();
+      } else {
+        reject(new Error('Invalid credentials'));
+      }
     });
-    
-    setIsLoading(false);
   };
 
   const logout = () => {
+    // Remove token from localStorage
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
+    
+    // Update state
     setIsAuthenticated(false);
     setUser(null);
   };
 
-  const value = {
-    isAuthenticated,
-    isLoading,
-    user,
-    login,
-    logout,
-  };
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        isLoading,
+        user,
+        login,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 };
