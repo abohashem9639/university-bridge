@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, Typography, Button, Divider } from '@mui/material';
+import { Box, Drawer, List, ListItemButton, ListItemIcon, ListItemText, Typography, Button, Divider } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Business, 
@@ -91,8 +91,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             const isActive = location.pathname === item.path;
             
             return (
-              <ListItem 
-                button 
+              <ListItemButton 
                 key={index} 
                 onClick={() => handleNavigation(item.path)}
                 sx={{ 
@@ -119,7 +118,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     }
                   }}
                 />
-              </ListItem>
+              </ListItemButton>
             );
           })}
         </List>
