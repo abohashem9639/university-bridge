@@ -81,7 +81,7 @@ const AgentsPage = () => {
       ) : (
         <Grid container spacing={3}>
           {agents.map((agent) => (
-            <Grid item xs={12} md={6} lg={4} key={agent.id}>
+            <Grid key={agent.id} xs={12} md={6} lg={4}>
               <Card sx={{ 
                 boxShadow: '0 4px 8px rgba(0,0,0,0.1)', 
                 transition: '0.3s',

@@ -14,7 +14,6 @@ import {
   Logout,
   Menu
 } from '@mui/icons-material';
-import { cn } from '@/lib/utils';
 
 interface AppLayoutProps {
   children: React.ReactNode;

@@ -1,368 +1,322 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useParams } from 'react-router-dom';
 import {
   Typography,
   Box,
+  Paper,
+  Grid,
+  Chip,
+  Divider,
+  Button,
   Card,
   CardContent,
-  Grid,
-  Stepper,
-  Step,
-  StepLabel,
-  Button,
-  Divider,
-  Paper,
-  Chip,
+  Avatar,
   List,
   ListItem,
   ListItemText,
-  ListItemIcon,
-  Avatar,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow
+  ListItemIcon
 } from '@mui/material';
 import {
-  CheckCircle,
   School,
   Person,
-  Description,
+  CalendarToday,
+  LocationOn,
   AttachMoney,
-  Forum,
-  CalendarMonth,
-  Assignment
+  Done,
+  Schedule,
+  Description,
+  Note,
+  Flag
 } from '@mui/icons-material';
-import { useParams } from 'react-router-dom';
 
-const ApplicationDetailsPage = () => {
+const ApplicationDetailsPage: React.FC = () => {
   const { id } = useParams();
-  const [application, setApplication] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    // محاكاة جلب بيانات الطلب من API
-    const fetchApplicationDetails = () => {
-      // بيانات نموذجية للطلب
-      const mockApplication = {
-        id: id,
-        studentName: "Ahmed Mohammed",
-        studentId: "STD123",
-        studentImage: "https://randomuser.me/api/portraits/men/32.jpg",
-        universityName: "Istanbul University",
-        universityLogo: "/images/university1.png",
-        program: "Computer Engineering",
-        degreeLevel: "Bachelor",
-        applicationDate: "2023-05-15",
-        status: "In Progress",
-        currentStep: 2,
-        steps: [
-          { id: 0, name: "Application Submitted", completed: true, date: "2023-05-15" },
-          { id: 1, name: "Document Verification", completed: true, date: "2023-05-20" },
-          { id: 2, name: "University Review", completed: false, date: null },
-          { id: 3, name: "Decision", completed: false, date: null },
-          { id: 4, name: "Enrollment", completed: false, date: null }
-        ],
-        documents: [
-          { id: 1, name: "Passport Copy", status: "Verified", date: "2023-05-16" },
-          { id: 2, name: "High School Diploma", status: "Verified", date: "2023-05-17" },
-          { id: 3, name: "Transcript", status: "Verified", date: "2023-05-18" },
-          { id: 4, name: "Language Certificate", status: "Pending", date: "2023-05-19" }
-        ],
-        payments: [
-          { id: 1, description: "Application Fee", amount: 100, currency: "USD", status: "Paid", date: "2023-05-15" },
-          { id: 2, description: "Registration Fee", amount: 500, currency: "USD", status: "Pending", date: null }
-        ],
-        notes: [
-          { id: 1, author: "Sarah Johnson", text: "Student has submitted all required documents.", date: "2023-05-16" },
-          { id: 2, author: "Mohammed Ali", text: "Language certificate verification in progress.", date: "2023-05-19" }
-        ],
-        timeline: [
-          { id: 1, event: "Application Submitted", date: "2023-05-15", description: "Student submitted application online" },
-          { id: 2, event: "Documents Uploaded", date: "2023-05-16", description: "All required documents uploaded" },
-          { id: 3, event: "Payment Confirmed", date: "2023-05-16", description: "Application fee payment confirmed" },
-          { id: 4, event: "Document Verification", date: "2023-05-20", description: "Documents verified by admissions team" }
-        ]
-      };
+  // Mock data for application details
+  const applicationData = {
+    id: id,
+    status: "In Progress",
+    date: "2023-01-15",
+    student: {
+      id: "STU123",
+      name: "Mohammed Abdullah",
+      email: "mohammed@example.com",
+      phone: "+90 555 123 4567",
+      nationality: "Saudi Arabia",
+      avatar: "https://randomuser.me/api/portraits/men/34.jpg"
+    },
+    university: {
+      name: "Istanbul Technical University",
+      program: "Computer Engineering",
+      degree: "Bachelor's",
+      location: "Istanbul, Turkey",
+      tuition: "8,000 USD/year"
+    },
+    documents: [
+      { id: "doc1", name: "Passport Copy", status: "Verified", date: "2023-01-10" },
+      { id: "doc2", name: "Transcripts", status: "Pending", date: "2023-01-12" },
+      { id: "doc3", name: "CV/Resume", status: "Verified", date: "2023-01-11" },
+      { id: "doc4", name: "Statement of Purpose", status: "Rejected", date: "2023-01-14" }
+    ],
+    timeline: [
+      { id: 1, date: "2023-01-05", title: "Application Created", description: "Application was submitted by the student" },
+      { id: 2, date: "2023-01-10", title: "Documents Uploaded", description: "Required documents were uploaded" },
+      { id: 3, date: "2023-01-15", title: "Under Review", description: "Application is being reviewed by the university" }
+    ],
+    notes: [
+      { id: "note1", author: "Ahmed Advisor", date: "2023-01-11", content: "Student has excellent academic record" },
+      { id: "note2", author: "Fatima Coordinator", date: "2023-01-13", content: "Statement of purpose needs revision" }
+    ]
+  };
 
-      setApplication(mockApplication);
-      setLoading(false);
-    };
-
-    // محاكاة تأخير الشبكة
-    setTimeout(fetchApplicationDetails, 1000);
-  }, [id]);
-
-  const getStatusColor = (status) => {
-    switch(status) {
-      case "Verified":
-      case "Paid":
-        return "success";
-      case "Pending":
-        return "warning";
+  // Helper function to get chip color based on status
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'verified':
+        return 'success';
+      case 'pending':
+        return 'warning';
+      case 'rejected':
+        return 'error';
+      case 'in progress':
+        return 'info';
       default:
-        return "default";
+        return 'default';
     }
   };
 
-  if (loading) {
-    return <Box sx={{ p: 3 }}><Typography>Loading application data...</Typography></Box>;
-  }
-
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ padding: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" gutterBottom>
-          Application Details: {application.id}
+          Application #{applicationData.id}
         </Typography>
         <Chip 
-          label={application.status} 
-          color={
-            application.status === "Approved" ? "success" : 
-            application.status === "Rejected" ? "error" : 
-            application.status === "In Progress" ? "primary" : 
-            "default"
-          }
-          sx={{ fontSize: '1rem', fontWeight: 'bold', p: 2 }}
+          label={applicationData.status} 
+          color={getStatusColor(applicationData.status) as any}
+          sx={{ fontSize: '1rem', padding: '20px 10px' }}
         />
       </Box>
 
       <Grid container spacing={3}>
-        {/* Left column */}
-        <Grid item xs={12} md={8}>
-          {/* Application Progress Stepper */}
-          <Paper sx={{ p: 3, mb: 3 }}>
-            <Typography variant="h6" gutterBottom>Application Progress</Typography>
-            <Stepper activeStep={application.currentStep} alternativeLabel>
-              {application.steps.map((step) => (
-                <Step key={step.id} completed={step.completed}>
-                  <StepLabel>
-                    <Box>
-                      {step.name}
-                      {step.date && (
-                        <Typography variant="caption" display="block" color="text.secondary">
-                          {new Date(step.date).toLocaleDateString()}
-                        </Typography>
-                      )}
-                    </Box>
-                  </StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-              <Button variant="contained">Update Status</Button>
-            </Box>
-          </Paper>
-
-          {/* Documents List */}
-          <Paper sx={{ p: 3, mb: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6">Documents</Typography>
-              <Button variant="outlined" size="small" startIcon={<Description />}>
-                Upload Document
-              </Button>
-            </Box>
-            <TableContainer>
-              <Table>
-                <TableHead>
-                  <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-                    <TableCell>Document Name</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {application.documents.map((doc) => (
-                    <TableRow key={doc.id}>
-                      <TableCell>{doc.name}</TableCell>
-                      <TableCell>
-                        <Chip 
-                          label={doc.status} 
-                          color={getStatusColor(doc.status)}
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell>{doc.date ? new Date(doc.date).toLocaleDateString() : "N/A"}</TableCell>
-                      <TableCell>
-                        <Button size="small" variant="outlined">View</Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Paper>
-
-          {/* Timeline */}
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>Application Timeline</Typography>
-            <List>
-              {application.timeline.map((item) => (
-                <React.Fragment key={item.id}>
-                  <ListItem>
-                    <ListItemIcon>
-                      <CalendarMonth />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary={
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="subtitle2">{item.event}</Typography>
-                          <Typography variant="body2" color="text.secondary">
-                            {new Date(item.date).toLocaleDateString()}
-                          </Typography>
-                        </Box>
-                      }
-                      secondary={item.description}
-                    />
-                  </ListItem>
-                  <Divider component="li" variant="inset" />
-                </React.Fragment>
-              ))}
+        <Grid xs={12} md={4}>
+          <Card sx={{ mb: 3 }}>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Avatar
+                  src={applicationData.student.avatar}
+                  sx={{ width: 80, height: 80, mr: 2 }}
+                />
+                <Box>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    {applicationData.student.name}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Student ID: {applicationData.student.id}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {applicationData.student.nationality}
+                  </Typography>
+                </Box>
+              </Box>
+              
+              <Divider sx={{ my: 2 }} />
+              
+              <Typography variant="body2">
+                <strong>Email:</strong> {applicationData.student.email}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Phone:</strong> {applicationData.student.phone}
+              </Typography>
+              
+              <Box sx={{ mt: 2 }}>
+                <Button variant="outlined" fullWidth>View Student Profile</Button>
+              </Box>
+            </CardContent>
+          </Card>
+          
+          <Paper sx={{ p: 2, mb: 3 }}>
+            <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+              <School sx={{ mr: 1 }} />
+              University Details
+            </Typography>
+            
+            <List dense>
+              <ListItem>
+                <ListItemIcon>
+                  <School fontSize="small" />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="University" 
+                  secondary={applicationData.university.name} 
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <Description fontSize="small" />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Program" 
+                  secondary={applicationData.university.program} 
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <Flag fontSize="small" />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Degree" 
+                  secondary={applicationData.university.degree} 
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <LocationOn fontSize="small" />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Location" 
+                  secondary={applicationData.university.location} 
+                />
+              </ListItem>
+              <ListItem>
+                <ListItemIcon>
+                  <AttachMoney fontSize="small" />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Tuition" 
+                  secondary={applicationData.university.tuition} 
+                />
+              </ListItem>
             </List>
           </Paper>
         </Grid>
 
-        {/* Right column */}
-        <Grid item xs={12} md={4}>
-          {/* Student Information */}
-          <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>Student Information</Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                <Avatar 
-                  src={application.studentImage} 
-                  sx={{ width: 60, height: 60, mr: 2, border: '2px solid #4A90E2' }} 
-                />
-                <Box>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                    {application.studentName}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Student ID: {application.studentId}
-                  </Typography>
-                </Box>
-              </Box>
-              <Button 
-                variant="outlined" 
-                fullWidth 
-                startIcon={<Person />}
-                size="small"
-              >
-                View Student Profile
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* University Information */}
-          <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>University & Program</Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                {application.universityLogo && (
-                  <Box
-                    component="img"
-                    src={application.universityLogo}
-                    alt={application.universityName}
-                    sx={{ width: 60, height: 60, mr: 2, objectFit: 'contain' }}
-                  />
-                )}
-                <Box>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                    {application.universityName}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {application.program} ({application.degreeLevel})
-                  </Typography>
-                </Box>
-              </Box>
-              <Button 
-                variant="outlined" 
-                fullWidth 
-                startIcon={<School />}
-                size="small"
-              >
-                University Details
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Payments Information */}
-          <Card sx={{ mb: 3 }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6">Payments</Typography>
-                <Button 
-                  variant="outlined" 
-                  size="small" 
-                  startIcon={<AttachMoney />}
+        <Grid xs={12} md={8}>
+          <Paper sx={{ p: 2, mb: 3 }}>
+            <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+              <Description sx={{ mr: 1 }} />
+              Required Documents
+            </Typography>
+            <TableContainer>
+              <Table>
+                <thead>
+                  <tr>
+                    <th>Document</th>
+                    <th>Upload Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {applicationData.documents.map(doc => (
+                    <tr key={doc.id}>
+                      <td>{doc.name}</td>
+                      <td>{doc.date}</td>
+                      <td>
+                        <Chip 
+                          label={doc.status} 
+                          size="small"
+                          color={getStatusColor(doc.status) as any}
+                        />
+                      </td>
+                      <td>
+                        <Button size="small" variant="outlined">View</Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </TableContainer>
+          </Paper>
+          
+          <Paper sx={{ p: 2, mb: 3 }}>
+            <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+              <Schedule sx={{ mr: 1 }} />
+              Application Timeline
+            </Typography>
+            <Box sx={{ position: 'relative' }}>
+              {applicationData.timeline.map((event, index) => (
+                <Box 
+                  key={event.id}
+                  sx={{ 
+                    display: 'flex',
+                    mb: index !== applicationData.timeline.length - 1 ? 3 : 0,
+                    position: 'relative',
+                    '&:after': index !== applicationData.timeline.length - 1 ? {
+                      content: '""',
+                      position: 'absolute',
+                      left: '10px',
+                      top: '30px',
+                      height: '100%',
+                      width: '2px',
+                      backgroundColor: 'primary.light',
+                      zIndex: 0
+                    } : {}
+                  }}
                 >
-                  Record Payment
-                </Button>
-              </Box>
-              <List>
-                {application.payments.map((payment) => (
-                  <ListItem key={payment.id} sx={{ px: 0 }}>
-                    <ListItemText
-                      primary={payment.description}
-                      secondary={`${payment.amount} ${payment.currency}`}
-                    />
-                    <Chip 
-                      label={payment.status} 
-                      color={getStatusColor(payment.status)}
-                      size="small"
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </CardContent>
-          </Card>
-
-          {/* Notes Section */}
-          <Card>
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6">Notes</Typography>
-                <Button 
-                  variant="outlined" 
-                  size="small" 
-                  startIcon={<Forum />}
-                >
-                  Add Note
-                </Button>
-              </Box>
-              <List sx={{ bgcolor: '#f9f9f9', borderRadius: 1 }}>
-                {application.notes.map((note) => (
-                  <React.Fragment key={note.id}>
-                    <ListItem alignItems="flex-start">
-                      <ListItemText
-                        primary={
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Typography variant="subtitle2">{note.author}</Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              {new Date(note.date).toLocaleDateString()}
-                            </Typography>
-                          </Box>
-                        }
-                        secondary={note.text}
-                      />
-                    </ListItem>
-                    <Divider component="li" />
-                  </React.Fragment>
-                ))}
-              </List>
-            </CardContent>
-          </Card>
+                  <Box sx={{ 
+                    backgroundColor: 'primary.main', 
+                    color: 'white', 
+                    borderRadius: '50%',
+                    width: '22px', 
+                    height: '22px', 
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1,
+                    mr: 1.5
+                  }}>
+                    {index + 1}
+                  </Box>
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                      {event.title}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                      {event.date}
+                    </Typography>
+                    <Typography variant="body2">
+                      {event.description}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          </Paper>
+          
+          <Paper sx={{ p: 2, mb: 3 }}>
+            <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
+              <Note sx={{ mr: 1 }} />
+              Notes & Comments
+            </Typography>
+            {applicationData.notes.map(note => (
+              <Paper 
+                key={note.id}
+                variant="outlined" 
+                sx={{ p: 2, mb: 2 }}
+              >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                  <Typography variant="subtitle2">{note.author}</Typography>
+                  <Typography variant="caption" color="text.secondary">{note.date}</Typography>
+                </Box>
+                <Typography variant="body2">{note.content}</Typography>
+              </Paper>
+            ))}
+            <Button 
+              variant="contained" 
+              color="primary" 
+              sx={{ mt: 1 }}
+            >
+              Add Note
+            </Button>
+          </Paper>
         </Grid>
       </Grid>
 
-      {/* Action Buttons */}
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 3, gap: 2 }}>
-        <Button variant="outlined" color="error">Reject Application</Button>
-        <Button variant="outlined">Request Additional Documents</Button>
-        <Button variant="contained" color="success" startIcon={<CheckCircle />}>Approve Application</Button>
+        <Button variant="outlined">Reject Application</Button>
+        <Button variant="contained" color="primary">Approve Application</Button>
       </Box>
     </Box>
   );

@@ -1,514 +1,315 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { 
   Typography, 
   Box, 
   Card, 
   CardContent, 
   Grid, 
-  Button, 
-  Avatar, 
-  Paper,
-  Divider,
+  Paper, 
+  Button,
+  Avatar,
   List,
   ListItem,
-  ListItemIcon,
   ListItemText,
   ListItemAvatar,
-  LinearProgress,
   Chip
 } from '@mui/material';
 import { 
-  Business, 
   People, 
-  Assignment, 
   School, 
+  Assignment, 
+  Notifications, 
   TrendingUp, 
-  CheckCircle,
-  Notifications,
-  CalendarMonth,
-  PersonAdd,
-  Home
+  CalendarToday
 } from '@mui/icons-material';
-import { useAuth } from '../context/AuthContext';
+import { Link } from 'react-router-dom';
 
-const HomePage = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const [stats, setStats] = useState(null);
-  const [recentActivities, setRecentActivities] = useState([]);
-  const [upcomingTasks, setUpcomingTasks] = useState([]);
-  const [announcements, setAnnouncements] = useState([]);
-  const [loading, setLoading] = useState(true);
+const HomePage: React.FC = () => {
+  const [stats, setStats] = useState({
+    students: 243,
+    applications: 158,
+    universities: 45,
+    completionRate: 76
+  });
 
-  useEffect(() => {
-    // محاكاة جلب البيانات من API
-    const fetchDashboardData = () => {
-      // بيانات إحصائية نموذجية
-      const mockStats = {
-        students: 245,
-        universities: 15,
-        activeApplications: 78,
-        completedApplications: 156,
-        taskCompletion: 68,
-      };
-      
-      // أنشطة حديثة نموذجية
-      const mockActivities = [
-        { 
-          id: 1, 
-          type: 'application', 
-          description: 'Ahmed Mohammed applied to Istanbul University', 
-          time: '2 hours ago',
-          icon: <Assignment sx={{ color: '#4A90E2' }} />
-        },
-        { 
-          id: 2, 
-          type: 'document', 
-          description: 'New documents uploaded for Fatima Ali', 
-          time: '3 hours ago',
-          icon: <School sx={{ color: '#28a745' }} />
-        },
-        { 
-          id: 3, 
-          type: 'student', 
-          description: 'New student registered: Omar Faruk', 
-          time: '5 hours ago',
-          icon: <PersonAdd sx={{ color: '#fd7e14' }} />
-        },
-        { 
-          id: 4, 
-          type: 'payment', 
-          description: 'Payment received from Ayşe Yılmaz', 
-          time: '12 hours ago',
-          icon: <CheckCircle sx={{ color: '#20c997' }} />
-        },
-      ];
-      
-      // مهام قادمة نموذجية
-      const mockTasks = [
-        {
-          id: 1,
-          title: 'Review Ahmed Mohammed\'s application',
-          dueDate: '2023-06-20',
-          priority: 'High'
-        },
-        {
-          id: 2,
-          title: 'Contact Istanbul University about program changes',
-          dueDate: '2023-06-22',
-          priority: 'Medium'
-        },
-        {
-          id: 3,
-          title: 'Verify documents for new registrations',
-          dueDate: '2023-06-25',
-          priority: 'Medium'
-        },
-        {
-          id: 4,
-          title: 'Update course catalog',
-          dueDate: '2023-06-30',
-          priority: 'Low'
-        }
-      ];
+  // Mock data for different sections
+  const recentApplications = [
+    { id: 1, student: 'Ahmed Ali', university: 'Istanbul University', program: 'Computer Science', status: 'Pending', date: '2023-03-28', avatar: 'https://randomuser.me/api/portraits/men/41.jpg' },
+    { id: 2, student: 'Fatima Hassan', university: 'Ankara University', program: 'Business Administration', status: 'Approved', date: '2023-03-27', avatar: 'https://randomuser.me/api/portraits/women/33.jpg' },
+    { id: 3, student: 'Omar Farooq', university: 'Bogazici University', program: 'Mechanical Engineering', status: 'Rejected', date: '2023-03-26', avatar: 'https://randomuser.me/api/portraits/men/36.jpg' },
+    { id: 4, student: 'Layla Mohammed', university: 'Istanbul Technical University', program: 'Architecture', status: 'Pending', date: '2023-03-25', avatar: 'https://randomuser.me/api/portraits/women/22.jpg' },
+  ];
 
-      // إعلانات نموذجية
-      const mockAnnouncements = [
-        {
-          id: 1,
-          title: 'New Application Process',
-          content: 'The application process has been updated. Please review the new guidelines.',
-          date: '2023-06-15',
-          author: 'Admin'
-        },
-        {
-          id: 2,
-          title: 'System Maintenance',
-          content: 'System maintenance scheduled for June 25, 2023. The system will be down from 2:00 AM to 5:00 AM.',
-          date: '2023-06-18',
-          author: 'System Administrator'
-        },
-      ];
+  const upcomingEvents = [
+    { id: 1, title: 'University Fair', date: 'April 5, 2023', location: 'Istanbul Expo Center' },
+    { id: 2, title: 'Student Orientation', date: 'April 10, 2023', location: 'Main Office' },
+    { id: 3, title: 'Application Deadline', date: 'April 15, 2023', location: 'Online' },
+  ];
 
-      setStats(mockStats);
-      setRecentActivities(mockActivities);
-      setUpcomingTasks(mockTasks);
-      setAnnouncements(mockAnnouncements);
-      setLoading(false);
-    };
+  const announcements = [
+    { id: 1, title: 'New Partnership with Turkish Universities', content: 'We are excited to announce new partnerships with 5 additional universities in Turkey.', date: '2023-03-27' },
+    { id: 2, title: 'Updated Application Process', content: 'The application process has been streamlined to improve efficiency.', date: '2023-03-25' },
+    { id: 3, title: 'Office Closed for Holiday', content: 'Our office will be closed on April 23 for National Sovereignty and Children\'s Day.', date: '2023-03-24' },
+  ];
 
-    // محاكاة تأخير الشبكة
-    setTimeout(fetchDashboardData, 1000);
-  }, []);
-
-  const getPriorityColor = (priority) => {
-    switch(priority) {
-      case 'High':
-        return '#dc3545';
-      case 'Medium':
-        return '#fd7e14';
-      case 'Low':
-        return '#20c997';
-      default:
-        return '#6c757d';
+  // Helper function for status color
+  const getStatusColor = (status: string) => {
+    switch(status.toLowerCase()) {
+      case 'approved': return 'success';
+      case 'pending': return 'warning';
+      case 'rejected': return 'error';
+      default: return 'default';
     }
   };
 
-  if (loading) {
-    return (
-      <Box sx={{ padding: 3 }}>
-        <Typography variant="h4" gutterBottom>Welcome to EduMasters CRM</Typography>
-        <Typography>Loading dashboard data...</Typography>
-      </Box>
-    );
-  }
-
   return (
     <Box sx={{ padding: 3 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">
-          Welcome back, {user?.name || 'Admin'}
-        </Typography>
-        <Button 
-          variant="contained"
-          startIcon={<PersonAdd />}
-          onClick={() => navigate('/add-student')}
-        >
-          Add New Student
+      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h4" gutterBottom>Dashboard</Typography>
+        <Button variant="contained" color="primary" component={Link} to="/add-application">
+          + New Application
         </Button>
       </Box>
 
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card 
-            sx={{ 
-              bgcolor: 'rgba(74, 144, 226, 0.1)', 
-              borderRadius: 2,
-              boxShadow: '0 4px 8px rgba(0,0,0,0.05)',
-              transition: '0.3s',
-              '&:hover': {
-                boxShadow: '0 6px 12px rgba(0,0,0,0.1)',
-                transform: 'translateY(-5px)'
-              }
-            }}
-          >
+        <Grid xs={6} sm={6} md={3}>
+          <Card sx={{ 
+            backgroundColor: 'primary.main', 
+            color: 'white',
+            '&:hover': { transform: 'translateY(-5px)', transition: 'transform 0.3s' }
+          }}>
             <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Box>
-                  <Typography color="text.secondary" variant="body2" gutterBottom>
-                    Total Students
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                    {stats.students}
-                  </Typography>
+                  <Typography variant="h4">{stats.students}</Typography>
+                  <Typography variant="body2">Total Students</Typography>
                 </Box>
-                <Avatar sx={{ bgcolor: '#4A90E2', width: 56, height: 56 }}>
-                  <People fontSize="large" />
-                </Avatar>
-              </Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  mt: 2
-                }}
-              >
-                <TrendingUp sx={{ color: '#28a745', mr: 0.5, fontSize: '1rem' }} />
-                <Typography variant="body2" color="#28a745">
-                  +12% from last month
-                </Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={3}>
-          <Card 
-            sx={{ 
-              bgcolor: 'rgba(40, 167, 69, 0.1)', 
-              borderRadius: 2,
-              boxShadow: '0 4px 8px rgba(0,0,0,0.05)',
-              transition: '0.3s',
-              '&:hover': {
-                boxShadow: '0 6px 12px rgba(0,0,0,0.1)',
-                transform: 'translateY(-5px)'
-              }
-            }}
-          >
-            <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Box>
-                  <Typography color="text.secondary" variant="body2" gutterBottom>
-                    Universities
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                    {stats.universities}
-                  </Typography>
-                </Box>
-                <Avatar sx={{ bgcolor: '#28a745', width: 56, height: 56 }}>
-                  <Business fontSize="large" />
-                </Avatar>
+                <People fontSize="large" />
               </Box>
               <Button 
                 variant="text" 
-                size="small" 
-                sx={{ mt: 2 }}
-                onClick={() => navigate('/universities')}
+                sx={{ color: 'white', mt: 1, p: 0 }}
+                component={Link}
+                to="/students"
               >
-                View All Universities
+                View All
               </Button>
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card 
-            sx={{ 
-              bgcolor: 'rgba(253, 126, 20, 0.1)', 
-              borderRadius: 2,
-              boxShadow: '0 4px 8px rgba(0,0,0,0.05)',
-              transition: '0.3s',
-              '&:hover': {
-                boxShadow: '0 6px 12px rgba(0,0,0,0.1)',
-                transform: 'translateY(-5px)'
-              }
-            }}
-          >
+        <Grid xs={6} sm={6} md={3}>
+          <Card sx={{ 
+            backgroundColor: '#FF9800', 
+            color: 'white',
+            '&:hover': { transform: 'translateY(-5px)', transition: 'transform 0.3s' }
+          }}>
             <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Box>
-                  <Typography color="text.secondary" variant="body2" gutterBottom>
-                    Active Applications
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                    {stats.activeApplications}
-                  </Typography>
+                  <Typography variant="h4">{stats.applications}</Typography>
+                  <Typography variant="body2">Applications</Typography>
                 </Box>
-                <Avatar sx={{ bgcolor: '#fd7e14', width: 56, height: 56 }}>
-                  <Assignment fontSize="large" />
-                </Avatar>
+                <Assignment fontSize="large" />
               </Box>
               <Button 
                 variant="text" 
-                size="small" 
-                sx={{ mt: 2 }}
-                onClick={() => navigate('/applications')}
+                sx={{ color: 'white', mt: 1, p: 0 }}
+                component={Link}
+                to="/applications"
               >
-                View All Applications
+                View All
               </Button>
             </CardContent>
           </Card>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
-          <Card 
-            sx={{ 
-              bgcolor: 'rgba(32, 201, 151, 0.1)', 
-              borderRadius: 2,
-              boxShadow: '0 4px 8px rgba(0,0,0,0.05)',
-              transition: '0.3s',
-              '&:hover': {
-                boxShadow: '0 6px 12px rgba(0,0,0,0.1)',
-                transform: 'translateY(-5px)'
-              }
-            }}
-          >
+        <Grid xs={6} sm={6} md={3}>
+          <Card sx={{ 
+            backgroundColor: '#4CAF50', 
+            color: 'white',
+            '&:hover': { transform: 'translateY(-5px)', transition: 'transform 0.3s' }
+          }}>
             <CardContent>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Box>
-                  <Typography color="text.secondary" variant="body2" gutterBottom>
-                    Completed
-                  </Typography>
-                  <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-                    {stats.completedApplications}
-                  </Typography>
+                  <Typography variant="h4">{stats.universities}</Typography>
+                  <Typography variant="body2">Universities</Typography>
                 </Box>
-                <Avatar sx={{ bgcolor: '#20c997', width: 56, height: 56 }}>
-                  <CheckCircle fontSize="large" />
-                </Avatar>
+                <School fontSize="large" />
               </Box>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  mt: 2
-                }}
+              <Button 
+                variant="text" 
+                sx={{ color: 'white', mt: 1, p: 0 }}
+                component={Link}
+                to="/universities"
               >
-                <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
-                  Task Completion
-                </Typography>
-                <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                  {stats.taskCompletion}%
-                </Typography>
+                View All
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid xs={6} sm={6} md={3}>
+          <Card sx={{ 
+            backgroundColor: '#9C27B0', 
+            color: 'white',
+            '&:hover': { transform: 'translateY(-5px)', transition: 'transform 0.3s' }
+          }}>
+            <CardContent>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box>
+                  <Typography variant="h4">{stats.completionRate}%</Typography>
+                  <Typography variant="body2">Completion Rate</Typography>
+                </Box>
+                <TrendingUp fontSize="large" />
               </Box>
-              <LinearProgress 
-                variant="determinate" 
-                value={stats.taskCompletion} 
-                sx={{ mt: 1, height: 6, borderRadius: 3, bgcolor: 'rgba(32, 201, 151, 0.2)' }}
-              />
+              <Button 
+                variant="text" 
+                sx={{ color: 'white', mt: 1, p: 0 }}
+              >
+                View Report
+              </Button>
             </CardContent>
           </Card>
         </Grid>
       </Grid>
 
       <Grid container spacing={3}>
-        {/* Recent Activities */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, borderRadius: 2, height: '100%' }}>
-            <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
-              <Assignment sx={{ mr: 1 }} /> Recent Activities
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-            <List>
-              {recentActivities.map((activity) => (
-                <ListItem key={activity.id} alignItems="flex-start">
-                  <ListItemAvatar>
-                    <Avatar sx={{ bgcolor: 'white' }}>
-                      {activity.icon}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={activity.description}
-                    secondary={activity.time}
-                  />
-                </ListItem>
-              ))}
-            </List>
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-              <Button variant="text">View All Activities</Button>
-            </Box>
-          </Paper>
-        </Grid>
-
-        {/* Upcoming Tasks */}
-        <Grid item xs={12} md={6}>
-          <Paper sx={{ p: 3, borderRadius: 2, height: '100%' }}>
-            <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
-              <CalendarMonth sx={{ mr: 1 }} /> Upcoming Tasks
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-            <List>
-              {upcomingTasks.map((task) => (
-                <ListItem key={task.id} alignItems="flex-start">
-                  <ListItemIcon sx={{ mt: 0.5 }}>
-                    <Chip 
-                      size="small"
-                      label={task.priority}
-                      sx={{ 
-                        bgcolor: getPriorityColor(task.priority),
-                        color: 'white',
-                        fontWeight: 'bold',
-                        minWidth: 60
-                      }}
-                    />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={task.title}
-                    secondary={`Due: ${new Date(task.dueDate).toLocaleDateString()}`}
-                  />
-                </ListItem>
-              ))}
-            </List>
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-              <Button variant="contained">Add New Task</Button>
-            </Box>
-          </Paper>
-        </Grid>
-
-        {/* Announcements */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 3, borderRadius: 2, mt: 2 }}>
-            <Typography variant="h6" sx={{ mb: 2, display: 'flex', alignItems: 'center' }}>
-              <Notifications sx={{ mr: 1 }} /> Announcements
-            </Typography>
-            <Divider sx={{ mb: 2 }} />
-            <Grid container spacing={2}>
-              {announcements.map((announcement) => (
-                <Grid item xs={12} md={6} key={announcement.id}>
-                  <Card sx={{ bgcolor: '#f9f9f9', boxShadow: 'none' }}>
-                    <CardContent>
-                      <Typography variant="h6" gutterBottom>
-                        {announcement.title}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        {announcement.content}
-                      </Typography>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <Typography variant="caption" color="text.secondary">
-                          By: {announcement.author}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {new Date(announcement.date).toLocaleDateString()}
-                        </Typography>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+        {/* Recent Applications */}
+        <Grid xs={12} md={6}>
+          <Paper sx={{ p: 2, height: '100%' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, alignItems: 'center' }}>
+              <Typography variant="h6">Recent Applications</Typography>
               <Button 
-                variant="outlined" 
-                startIcon={<Notifications />}
-                onClick={() => navigate('/announcements')}
+                component={Link} 
+                to="/applications"
+                variant="text" 
+                size="small"
               >
-                View All Announcements
+                View All
               </Button>
             </Box>
-          </Paper>
-        </Grid>
-      </Grid>
-
-      {/* About EduMasters Section */}
-      <Card sx={{ mt: 4, p: 2, borderRadius: 2 }}>
-        <CardContent>
-          <Typography variant="h5" sx={{ mb: 1, fontWeight: 'bold', color: '#020233' }}>About EduMasters CRM</Typography>
-          <Typography variant="body1" sx={{ mb: 2 }}>
-            EduMasters CRM is an all-in-one platform designed to streamline the management of universities, students, applications, agents, and more. It provides a user-friendly interface for administrative tasks, offering tools for managing student data, applications, and employee records.
-          </Typography>
-          
-          <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid item xs={12} md={6}>
-              <Typography variant="h6" sx={{ mb: 1, color: '#4A90E2' }}>Key Features:</Typography>
-              <List dense>
-                <ListItem>
-                  <ListItemIcon><Business sx={{ color: '#020233' }} /></ListItemIcon>
-                  <ListItemText primary="Universities: Manage university details, branches and departments" />
-                </ListItem>
-                <ListItem>
-                  <ListItemIcon><People sx={{ color: '#020233' }} /></ListItemIcon>
-                  <ListItemText primary="Students: Track student data, admissions, and academic progress" />
-                </ListItem>
-                <ListItem>
-                  <ListItemIcon><Assignment sx={{ color: '#020233' }} /></ListItemIcon>
-                  <ListItemText primary="Applications: Manage applications to universities and track status" />
-                </ListItem>
-              </List>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
+            <List>
+              {recentApplications.map((app) => (
+                <ListItem 
+                  key={app.id}
+                  sx={{ 
+                    border: '1px solid #eee', 
+                    borderRadius: 1, 
+                    mb: 1,
+                    '&:hover': { backgroundColor: '#f9f9f9' } 
                   }}
                 >
-                  <Home sx={{ fontSize: 80, color: '#020233', mb: 1 }} />
-                  <Typography variant="h5" sx={{ color: '#020233', fontWeight: 'bold' }}>EduMasters CRM</Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Simplifying education management
-                  </Typography>
+                  <ListItemAvatar>
+                    <Avatar src={app.avatar} />
+                  </ListItemAvatar>
+                  <ListItemText 
+                    primary={app.student}
+                    secondary={
+                      <React.Fragment>
+                        <Typography variant="body2" component="span">
+                          {app.university} - {app.program}
+                        </Typography>
+                        <Typography variant="caption" display="block" color="text.secondary">
+                          {app.date}
+                        </Typography>
+                      </React.Fragment>
+                    }
+                  />
+                  <Chip 
+                    label={app.status}
+                    size="small"
+                    color={getStatusColor(app.status) as any}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        </Grid>
+
+        {/* Upcoming Events and Announcements */}
+        <Grid xs={12} md={6}>
+          <Grid container spacing={3}>
+            {/* Upcoming Events */}
+            <Grid xs={12}>
+              <Paper sx={{ p: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, alignItems: 'center' }}>
+                  <Typography variant="h6">Upcoming Events</Typography>
+                  <Button variant="text" size="small">View Calendar</Button>
                 </Box>
-              </Box>
+                <List dense>
+                  {upcomingEvents.map((event) => (
+                    <ListItem key={event.id} sx={{ borderBottom: '1px solid #eee', py: 1 }}>
+                      <ListItemAvatar>
+                        <Avatar sx={{ backgroundColor: 'primary.main' }}>
+                          <CalendarToday />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText 
+                        primary={event.title}
+                        secondary={
+                          <React.Fragment>
+                            <Typography variant="body2" component="span">
+                              {event.date}
+                            </Typography>
+                            <Typography variant="caption" display="block" color="text.secondary">
+                              {event.location}
+                            </Typography>
+                          </React.Fragment>
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Paper>
+            </Grid>
+
+            {/* Announcements */}
+            <Grid xs={12} sx={{ mt: 3 }}>
+              <Paper sx={{ p: 2 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2, alignItems: 'center' }}>
+                  <Typography variant="h6">Announcements</Typography>
+                  <Button 
+                    component={Link} 
+                    to="/announcements"
+                    variant="text" 
+                    size="small"
+                  >
+                    View All
+                  </Button>
+                </Box>
+                <List dense>
+                  {announcements.map((announcement) => (
+                    <ListItem key={announcement.id} sx={{ borderBottom: '1px solid #eee', py: 1 }}>
+                      <ListItemAvatar>
+                        <Avatar sx={{ backgroundColor: '#FF5722' }}>
+                          <Notifications />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText 
+                        primary={announcement.title}
+                        secondary={
+                          <React.Fragment>
+                            <Typography variant="body2" component="span">
+                              {announcement.content.substring(0, 60)}...
+                            </Typography>
+                            <Typography variant="caption" display="block" color="text.secondary">
+                              {announcement.date}
+                            </Typography>
+                          </React.Fragment>
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </Paper>
             </Grid>
           </Grid>
-        </CardContent>
-      </Card>
+        </Grid>
+      </Grid>
     </Box>
   );
 };

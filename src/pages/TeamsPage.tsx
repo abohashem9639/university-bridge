@@ -1,279 +1,276 @@
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Typography, 
-  Box, 
-  Card, 
-  CardContent, 
-  Grid, 
-  Avatar, 
-  Button,
+import {
+  Typography,
+  Box,
+  Card,
+  CardContent,
+  Avatar,
   Chip,
+  Button,
+  TextField,
+  InputAdornment,
+  Grid,
+  Paper,
+  Divider,
+  IconButton,
+  Menu,
+  MenuItem,
   List,
   ListItem,
-  ListItemAvatar,
   ListItemText,
-  Divider,
-  Paper
+  ListItemAvatar
 } from '@mui/material';
-import { People, Person, PersonAdd, Work } from '@mui/icons-material';
+import {
+  Search,
+  Add,
+  MoreVert,
+  Group,
+  People,
+  Person,
+  Email,
+  Phone
+} from '@mui/icons-material';
 
 const TeamsPage = () => {
+  const [searchTerm, setSearchTerm] = useState('');
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTeam, setSelectedTeam] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  // For menu
+  const handleMenuClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
-    // محاكاة جلب البيانات من API
+    // Mock fetch teams
     const fetchTeams = () => {
-      // بيانات نموذجية للفرق
       const mockTeams = [
         {
           id: 1,
-          name: "Admissions Team",
-          description: "Handles student applications and university admissions",
-          leader: {
-            id: 101,
-            name: "Sarah Johnson",
-            title: "Admissions Manager",
-            avatar: "https://randomuser.me/api/portraits/women/44.jpg"
+          name: "Student Support Team",
+          description: "Handles student inquiries and application support",
+          members: 8,
+          activeProjects: 5,
+          lead: {
+            name: "Ahmed Hassan",
+            position: "Senior Advisor",
+            avatar: "https://randomuser.me/api/portraits/men/42.jpg"
           },
-          members: 5,
-          activeProjects: 3,
+          status: "Active",
           teamMembers: [
-            {
-              id: 102,
-              name: "Mohammed Ali",
-              title: "Senior Admissions Officer",
-              avatar: "https://randomuser.me/api/portraits/men/32.jpg"
-            },
-            {
-              id: 103,
-              name: "Ayşe Yılmaz",
-              title: "Admissions Officer",
-              avatar: "https://randomuser.me/api/portraits/women/67.jpg"
-            },
-            {
-              id: 104,
-              name: "John Smith",
-              title: "Admissions Assistant",
-              avatar: "https://randomuser.me/api/portraits/men/75.jpg"
-            }
+            { id: 1, name: "Fatima Ali", position: "Student Advisor", avatar: "https://randomuser.me/api/portraits/women/32.jpg" },
+            { id: 2, name: "Mohammed Yusuf", position: "Student Advisor", avatar: "https://randomuser.me/api/portraits/men/22.jpg" },
+            { id: 3, name: "Aisha Khan", position: "Application Specialist", avatar: "https://randomuser.me/api/portraits/women/22.jpg" }
           ]
         },
         {
           id: 2,
-          name: "Student Services",
-          description: "Provides support for current students",
-          leader: {
-            id: 201,
-            name: "Mehmet Kaya",
-            title: "Student Services Director",
-            avatar: "https://randomuser.me/api/portraits/men/42.jpg"
+          name: "University Relations",
+          description: "Manages relationships with partner universities",
+          members: 6,
+          activeProjects: 3,
+          lead: {
+            name: "Mustafa Kemal",
+            position: "University Liaison",
+            avatar: "https://randomuser.me/api/portraits/men/32.jpg"
           },
-          members: 7,
-          activeProjects: 4,
+          status: "Active",
           teamMembers: [
-            {
-              id: 202,
-              name: "Emily Williams",
-              title: "Student Advisor",
-              avatar: "https://randomuser.me/api/portraits/women/33.jpg"
-            },
-            {
-              id: 203,
-              name: "Mustafa Demir",
-              title: "Housing Coordinator",
-              avatar: "https://randomuser.me/api/portraits/men/55.jpg"
-            }
+            { id: 1, name: "Ibrahim Ahmed", position: "University Coordinator", avatar: "https://randomuser.me/api/portraits/men/33.jpg" },
+            { id: 2, name: "Leila Mohammed", position: "Program Specialist", avatar: "https://randomuser.me/api/portraits/women/33.jpg" }
           ]
         },
         {
           id: 3,
           name: "Marketing Team",
-          description: "Manages university marketing and promotions",
-          leader: {
-            id: 301,
-            name: "Zeynep Şahin",
-            title: "Marketing Director",
-            avatar: "https://randomuser.me/api/portraits/women/22.jpg"
-          },
+          description: "Handles promotion and outreach activities",
           members: 4,
-          activeProjects: 2,
+          activeProjects: 7,
+          lead: {
+            name: "Zahra Abdullah",
+            position: "Marketing Manager",
+            avatar: "https://randomuser.me/api/portraits/women/42.jpg"
+          },
+          status: "Active",
           teamMembers: [
-            {
-              id: 302,
-              name: "David Lee",
-              title: "Digital Marketing Specialist",
-              avatar: "https://randomuser.me/api/portraits/men/18.jpg"
-            },
-            {
-              id: 303,
-              name: "Fatima Hassan",
-              title: "Content Creator",
-              avatar: "https://randomuser.me/api/portraits/women/28.jpg"
-            }
+            { id: 1, name: "Omar Farooq", position: "Social Media Specialist", avatar: "https://randomuser.me/api/portraits/men/40.jpg" },
+            { id: 2, name: "Noor Fatima", position: "Content Creator", avatar: "https://randomuser.me/api/portraits/women/40.jpg" }
           ]
         }
       ];
-
+      
       setTeams(mockTeams);
       setLoading(false);
     };
-
-    // محاكاة تأخير الشبكة
+    
+    // Simulate API delay
     setTimeout(fetchTeams, 1000);
   }, []);
 
-  const handleTeamSelect = (team) => {
-    setSelectedTeam(team);
-  };
+  // Filter teams based on search term
+  const filteredTeams = teams.filter(team => 
+    team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    team.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" gutterBottom>Teams</Typography>
-
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" gutterBottom>Teams Management</Typography>
         <Button 
           variant="contained" 
-          color="primary"
-          startIcon={<PersonAdd />}
+          color="primary" 
+          startIcon={<Add />}
         >
           Create New Team
         </Button>
       </Box>
-
+      
+      <Box sx={{ mb: 3 }}>
+        <TextField
+          fullWidth
+          placeholder="Search teams by name or description..."
+          variant="outlined"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Search />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Box>
+      
       {loading ? (
-        <Typography>Loading teams data...</Typography>
+        <Typography variant="body1">Loading teams...</Typography>
       ) : (
         <Grid container spacing={3}>
-          <Grid item xs={12} md={selectedTeam ? 6 : 12}>
-            <Grid container spacing={2}>
-              {teams.map((team) => (
-                <Grid item xs={12} md={selectedTeam ? 12 : 4} key={team.id}>
-                  <Card 
-                    sx={{ 
-                      cursor: 'pointer',
-                      transition: '0.3s',
-                      bgcolor: selectedTeam?.id === team.id ? '#f0f7ff' : 'white',
-                      border: selectedTeam?.id === team.id ? '1px solid #4A90E2' : 'none',
-                      '&:hover': {
-                        boxShadow: '0 8px 16px rgba(0,0,0,0.1)',
-                        transform: 'translateY(-4px)'
-                      }
-                    }}
-                    onClick={() => handleTeamSelect(team)}
-                  >
-                    <CardContent>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#020233' }}>{team.name}</Typography>
-                        <Chip 
-                          icon={<People />} 
-                          label={`${team.members} members`} 
-                          size="small"
-                          sx={{ bgcolor: '#e3f2fd', color: '#1565c0' }}
-                        />
+          {filteredTeams.map((team) => (
+            <Grid key={team.id} xs={12} md={6}>
+              <Card sx={{ 
+                height: '100%',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+                transition: '0.3s',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                  boxShadow: '0 8px 16px rgba(0,0,0,0.2)'
+                }
+              }}>
+                <CardContent>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Avatar 
+                        sx={{ 
+                          bgcolor: 'primary.main',
+                          width: 40, 
+                          height: 40,
+                          mr: 2 
+                        }}
+                      >
+                        <Group />
+                      </Avatar>
+                      <Box>
+                        <Typography variant="h6">{team.name}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {team.description}
+                        </Typography>
                       </Box>
-                      
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        {team.description}
-                      </Typography>
-                      
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <Avatar src={team.leader.avatar} sx={{ mr: 1.5 }} />
-                        <Box>
-                          <Typography variant="body2" sx={{ fontWeight: 'bold' }}>{team.leader.name}</Typography>
-                          <Typography variant="caption" color="text.secondary">{team.leader.title}</Typography>
-                        </Box>
-                      </Box>
-                      
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Chip 
-                          variant="outlined" 
-                          color="primary" 
-                          label={`${team.activeProjects} Active Projects`}
-                          size="small"
-                        />
-                        <Button size="small" color="primary">Details</Button>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          </Grid>
-
-          {selectedTeam && (
-            <Grid item xs={12} md={6}>
-              <Paper sx={{ p: 3, height: '100%' }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                  <Avatar 
-                    sx={{ 
-                      bgcolor: '#4A90E2',
-                      width: 56,
-                      height: 56,
-                      mr: 2
-                    }}
-                  >
-                    <Work />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="h5">{selectedTeam.name}</Typography>
-                    <Typography variant="body1" color="text.secondary">{selectedTeam.description}</Typography>
+                    </Box>
+                    <Box>
+                      <Chip 
+                        label={team.status} 
+                        color={team.status === "Active" ? "success" : "default"} 
+                        size="small" 
+                      />
+                      <IconButton 
+                        size="small" 
+                        onClick={handleMenuClick}
+                        aria-label="team options"
+                      >
+                        <MoreVert />
+                      </IconButton>
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={handleMenuClose}
+                      >
+                        <MenuItem onClick={handleMenuClose}>Edit Team</MenuItem>
+                        <MenuItem onClick={handleMenuClose}>Manage Members</MenuItem>
+                        <MenuItem onClick={handleMenuClose}>Delete Team</MenuItem>
+                      </Menu>
+                    </Box>
                   </Box>
-                </Box>
-
-                <Divider sx={{ mb: 3 }} />
-                
-                <Typography variant="h6" gutterBottom>
-                  Team Leader
-                </Typography>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, p: 2, bgcolor: '#f5f5f5', borderRadius: 2 }}>
-                  <Avatar 
-                    src={selectedTeam.leader.avatar} 
-                    sx={{ width: 64, height: 64, mr: 2 }} 
-                  />
-                  <Box>
-                    <Typography variant="h6">{selectedTeam.leader.name}</Typography>
-                    <Typography variant="body2">{selectedTeam.leader.title}</Typography>
-                    <Button size="small" sx={{ mt: 1 }} variant="outlined">Contact</Button>
+                  
+                  <Divider sx={{ my: 2 }} />
+                  
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <People sx={{ color: 'primary.main', mr: 1 }} />
+                      <Typography variant="body2">{team.members} Members</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Person sx={{ color: 'primary.main', mr: 1 }} />
+                      <Typography variant="body2">{team.activeProjects} Projects</Typography>
+                    </Box>
                   </Box>
-                </Box>
-
-                <Typography variant="h6" gutterBottom>
-                  Team Members
-                </Typography>
-
-                <List>
-                  {selectedTeam.teamMembers.map((member) => (
-                    <React.Fragment key={member.id}>
-                      <ListItem>
+                  
+                  <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
+                    <Typography variant="subtitle2" sx={{ mb: 1 }}>Team Lead</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Avatar 
+                        src={team.lead.avatar} 
+                        sx={{ mr: 2 }}
+                      />
+                      <Box>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                          {team.lead.name}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {team.lead.position}
+                        </Typography>
+                      </Box>
+                    </Box>
+                  </Paper>
+                  
+                  <Typography variant="subtitle2" sx={{ mb: 1 }}>Team Members</Typography>
+                  <List dense>
+                    {team.teamMembers.map((member) => (
+                      <ListItem key={member.id}>
                         <ListItemAvatar>
                           <Avatar src={member.avatar} />
                         </ListItemAvatar>
                         <ListItemText 
-                          primary={member.name} 
-                          secondary={member.title} 
+                          primary={member.name}
+                          secondary={member.position}
                         />
                       </ListItem>
-                      <Divider variant="inset" component="li" />
-                    </React.Fragment>
-                  ))}
-                </List>
-
-                <Button 
-                  variant="contained" 
-                  color="primary" 
-                  startIcon={<PersonAdd />}
-                  sx={{ mt: 3 }}
-                  fullWidth
-                >
-                  Add Team Member
-                </Button>
-              </Paper>
+                    ))}
+                    {team.members > team.teamMembers.length + 1 && (
+                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1, pl: 2 }}>
+                        + {team.members - team.teamMembers.length - 1} more members
+                      </Typography>
+                    )}
+                  </List>
+                  
+                  <Button 
+                    variant="outlined" 
+                    fullWidth 
+                    sx={{ mt: 2 }}
+                  >
+                    View Team Details
+                  </Button>
+                </CardContent>
+              </Card>
             </Grid>
-          )}
+          ))}
         </Grid>
       )}
     </Box>

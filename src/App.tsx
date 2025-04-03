@@ -9,7 +9,6 @@ import AppLayout from "./components/Layout/AppLayout";
 import LoginPage from "./components/LoginPage";
 import HomePage from "./pages/HomePage";
 import UniversitiesPage from "./pages/UniversitiesPage";
-import ProtectedRoute from "./components/ProtectedRoute";
 import BranchesPage from "./pages/BranchesPage";
 import CreateUserPage from "./components/CreateUserPage";
 import StudentsListPage from "./pages/StudentsListPage";
@@ -41,125 +40,91 @@ const App = () => (
             <Route path="/login" element={<LoginPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             
-            {/* Protected Routes with Layout */}
+            {/* Routes with Layout - No longer protected */}
             <Route path="/" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <HomePage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <HomePage />
+              </AppLayout>
             } />
             <Route path="/students" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <StudentsListPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <StudentsListPage />
+              </AppLayout>
             } />
             <Route path="/students/:id" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <StudentDetailsPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <StudentDetailsPage />
+              </AppLayout>
             } />
             <Route path="/add-student" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <AddStudentPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <AddStudentPage />
+              </AppLayout>
             } />
             <Route path="/universities" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <UniversitiesPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <UniversitiesPage />
+              </AppLayout>
             } />
             <Route path="/create-user" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <CreateUserPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <CreateUserPage />
+              </AppLayout>
             } />
             <Route path="/branches/:universityId" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <BranchesPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <BranchesPage />
+              </AppLayout>
             } />
             <Route path="/employees" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <EmployeesPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <EmployeesPage />
+              </AppLayout>
             } />
             <Route path="/add-application" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <AddApplicationPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <AddApplicationPage />
+              </AppLayout>
             } />
             <Route path="/agents" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <AgentsPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <AgentsPage />
+              </AppLayout>
             } />
             <Route path="/sub-agents" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <SubAgentsPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <SubAgentsPage />
+              </AppLayout>
             } />
             <Route path="/teams" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <TeamsPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <TeamsPage />
+              </AppLayout>
             } />
             <Route path="/profile" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <ProfilePage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <ProfilePage />
+              </AppLayout>
             } />
             <Route path="/announcements" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <AnnouncementsPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <AnnouncementsPage />
+              </AppLayout>
             } />
             <Route path="/AllBranchesPage" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <AllBranchesPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <AllBranchesPage />
+              </AppLayout>
             } />
             <Route path="/applications" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <ApplicationsPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <ApplicationsPage />
+              </AppLayout>
             } />
             <Route path="/applications/:id" element={
-              <ProtectedRoute>
-                <AppLayout>
-                  <ApplicationDetailsPage />
-                </AppLayout>
-              </ProtectedRoute>
+              <AppLayout>
+                <ApplicationDetailsPage />
+              </AppLayout>
             } />
             <Route path="*" element={<NotFound />} />
           </Routes>
